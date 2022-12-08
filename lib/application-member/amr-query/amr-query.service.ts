@@ -23,7 +23,7 @@ export class AmrQueryService {
    * @returns
    */
   public async getApplicationMembers(
-    appId: number,
+    appId: string,
     pageOptionsDto: BaseDtoQuery,
   ): Promise<ApiResponse<AccountMemberRelationship[]>> {
     const { order, take, search, page } = pageOptionsDto;
@@ -108,7 +108,7 @@ export class AmrQueryService {
   }
 
   public async awrExists(
-    { accountId, applicationId }: { accountId: string; applicationId: number },
+    { accountId, applicationId }: { accountId: string; applicationId: string },
     manager: EntityManager = this.entityManager,
   ): Promise<boolean> {
     const count = await manager
@@ -120,7 +120,7 @@ export class AmrQueryService {
   }
 
   public async getApplication(
-    appId: number,
+    appId: string,
     user: RequestUser,
   ): Promise<ApiResponse<IApplicationResponse>> {
     const { id } = user;
@@ -133,25 +133,30 @@ export class AmrQueryService {
         .innerJoin("amr.account", "account", "account.id = :id", { id })
         .innerJoinAndSelect("amr.application", "application")
         .innerJoinAndSelect("application.owner", "owner")
-        .leftJoinAndSelect("application.influxDS", "influxDS")
         .getOne();
 
       if (!applicationQuery) {
-        // TODO:
         return new ApiResponse("success", undefined, []);
       }
 
       const response = this.mapApplicationResponse(applicationQuery);
       return new ApiResponse("success", undefined, response);
     } catch (error) {
-      this.logger.error(`[${this.getApplicationsForAccount.name}] Caused by: ${error}`);
+      this.logger.error(`[${this.getApplication.name}] Caused by: ${error}`);
       return new ApiResponse("error", INTERNAL_SERVER_ERROR);
     }
   }
 
   private mapApplicationResponse({ application, role }: AccountMemberRelationship): IApplicationResponse {
+    const { influxDS } = application;
+
     return {
       ...application,
+      influxDS: {
+        ...influxDS,
+        connStatus: influxDS?.connStatus,
+        connError: influxDS?.connError
+      },
       member: {
         role
       },

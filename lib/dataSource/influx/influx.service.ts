@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
-import { InfluxDS } from '../../db/entities/influxds.entity';
-import { Application } from '../../db/entities/application.entity';
 import { InfluxDB, Point } from '@influxdata/influxdb-client'
 import { DataSourceConnStatus } from '../../../lib/types/interfaces/tsdb.interface';
 import { IMetrics, MetricsQuery, MetricsResponse } from '../../../lib/types/interfaces/metrics.interface';
 import { CONNECTION_STATUS, TSDB } from '../../../lib/types/enums/tsdb.enum';
 import { InfluxConfigurationDto } from '../../../lib/types/dto/influx.dto';
-import { InfluxConfiguration } from '../../../lib/types/interfaces/influxds.interface';
+import { IInfluxDs, InfluxConfiguration } from '../../../lib/types/interfaces/influxds.interface';
 import { ApiResponse } from '../../../lib/types/dto/response.dto';
 import { INTERNAL_SERVER_ERROR } from '../../../lib/helpers/constants';
+import { Application } from '../../../lib/db/entities/application.entity';
 
 @Injectable()
 export class InfluxService {
@@ -22,45 +21,18 @@ export class InfluxService {
     }
 
     async saveInfluxDataSource(config: InfluxConfigurationDto): Promise<ApiResponse<DataSourceConnStatus>> {
-        const { appId, token, ...rest } = config;
+        const { appId } = config;
 
-        return await this.entityManager.transaction(async (manager) => {
-            const influxRef = manager.getRepository(InfluxDS);
-            const ds = await influxRef.findOneBy({
-                application: {
-                    id: appId
-                }
-            });
-
-            const dataSource = {
-                ...rest,
-                application: {
-                    id: appId
+        return this.entityManager.transaction(async (manager) => {
+            const { status, error } = await this.influxConnectionTest({ ...config });
+            await manager.getRepository(Application).update({ id: appId }, {
+                influxDS: {
+                    ...config,
+                    connError: error,
+                    connStatus: status
                 },
-                token
-            }
-
-            const { status, error } = await this.influxConnectionTest({ ...dataSource });
-            const dsPayload = {
-                ...dataSource,
-                connError: error,
-                connStatus: status
-            }
-            if (!ds) {
-                const influx = await influxRef.save(dsPayload);
-                await manager.getRepository(Application).update({ id: appId }, {
-                    connectedTSDB: TSDB.INFLUX2,
-                    influxDS: influx
-                })
-
-                this.logger.log(`InfluxDB data source attached to app: ${appId}`);
-
-                return new ApiResponse("success", "InfluxDB data source updated", {
-                    status, error
-                });
-            }
-
-            await influxRef.update({ id: ds.id }, dsPayload);
+                connectedTSDB: TSDB.INFLUX2
+            });
             this.logger.log(`InfluxDB data source updated in app: ${appId}`);
 
             return new ApiResponse("success", "InfluxDB data source updated", {
@@ -73,8 +45,16 @@ export class InfluxService {
     }
 
     async writeData(config: Partial<InfluxConfiguration>, data: IMetrics): Promise<void> {
-        const { url, token, bucket, org, connStatus, appId } = config;
+        const { appId, connStatus, ...rest } = config;
+        const { bucket, org, token, url } = rest;
         const { cpuUsage, memory, loadAvg, heap, eventLoopLag, gc } = data;
+
+        if (!url || !token) {
+            this.logger.error(`[${this.queryData.name}] URL and Token are required!`);
+            return;
+        }
+
+        const appRef = this.entityManager.getRepository(Application);
 
         const influxDb = new InfluxDB({ url, token });
 
@@ -95,8 +75,6 @@ export class InfluxService {
             .floatField('gcTotalTime', gc.duration?.total || 0)
             .floatField('gcAvgTime', gc.duration?.average || 0);
 
-        const influxRef = this.entityManager.getRepository(InfluxDS);
-
         write.writePoint(point);
         write
             .close()
@@ -104,20 +82,16 @@ export class InfluxService {
                 this.logger.log(`New metrics write to InfluxDB for appId: ${appId}`);
 
                 if (connStatus === CONNECTION_STATUS.FAILED) {
-                    await influxRef.update({ application: { id: appId } }, {
-                        connStatus: CONNECTION_STATUS.CONNECTED,
-                        connError: null
-                    });
+                    const influxDS = { ...rest, connStatus: CONNECTION_STATUS.CONNECTED, connError: null };
+                    await appRef.update({ id: appId }, { influxDS });
                 }
             })
             .catch(async (error) => {
                 this.logger.error(`Cannot write new metrics to InfluxDB for appId: ${appId}. Caused by: ${error}`);
 
                 if (connStatus === CONNECTION_STATUS.CONNECTED) {
-                    await influxRef.update({ application: { id: appId } }, {
-                        connStatus: CONNECTION_STATUS.FAILED,
-                        connError: error
-                    });
+                    const influxDS = { ...rest, connStatus: CONNECTION_STATUS.FAILED, connError: String(error["code"]) };
+                    await appRef.update({ id: appId }, { influxDS });
                 }
             });
     }
@@ -144,9 +118,14 @@ export class InfluxService {
             });
     }
 
-    async queryData(config: InfluxConfigurationDto, dtoQuery: MetricsQuery): Promise<MetricsResponse[]> {
+    async queryData(config: IInfluxDs, dtoQuery: MetricsQuery): Promise<MetricsResponse[]> {
         const { url, token, org, bucket } = config;
         const { hrCount, id } = dtoQuery;
+
+        if (!url || !token) {
+            this.logger.error(`[${this.queryData.name}] URL and Token are required!`);
+            return;
+        }
 
         const influxDb = new InfluxDB({ url, token });
 

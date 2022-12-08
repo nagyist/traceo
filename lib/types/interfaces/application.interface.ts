@@ -1,18 +1,15 @@
-import { InfluxDS } from "../../../lib/db/entities/influxds.entity";
 import { MemberRole } from "../enums/amr.enum";
 import { CONNECTION_STATUS, TSDB } from "../enums/tsdb.enum";
 import { IAccount } from "./account.interface";
 import { IAmr } from "./amr.interface";
 import { IIncident } from "./incident.interface";
+import { IInfluxDs } from "./influxds.interface";
 import { IRuntime } from "./runtime.interface";
 
 export interface IApplication {
-    id?: number;
+    id?: string;
     name: string;
-    privateKey: string;
-    dsn?: string;
     owner: IAccount;
-    aboutDescription?: string;
     gravatar?: string;
     lastIncidentAt?: number;
     members?: IAmr[];
@@ -20,10 +17,17 @@ export interface IApplication {
     incidents?: IIncident[];
     incidentsCount?: number;
     errorsCount?: number;
-    runtimeData?: IRuntime[];
-    influxDS?: InfluxDS;
+    runtimeConfig?: IRuntime;
+    influxDS?: IInfluxDs;
     connectedTSDB?: TSDB;
     isIntegrated: boolean;
+    security?: ISecurity;
+}
+
+export interface ISecurity {
+    apiKey: string;
+    lastUpdate: number;
+    generatedBy: string;
 }
 
 export interface IApplicationResponse extends Omit<IApplication, "influxDS" | "owner"> {

@@ -3,7 +3,6 @@ import { AmrService } from '../application-member/amr.service';
 import { Application } from '../db/entities/application.entity';
 import { EntityManager } from 'typeorm';
 import * as crypto from "crypto";
-import { ApplicationWithNameAlreadyExistsError } from '../helpers/errors';
 import dateUtils from '../helpers/dateUtils';
 import { ApplicationQueryService } from './application-query/application-query.service';
 import { AccountQueryService } from '../account/account-query/account-query.service';
@@ -16,6 +15,7 @@ import { gravatar } from '../../lib/helpers/gravatar';
 import { RequestUser } from '../../lib/types/interfaces/account.interface';
 import { ApplicationDto, CreateApplicationDto } from '../../lib/types/dto/application.dto';
 import { ApiResponse } from '../../lib/types/dto/response.dto';
+import { uuidService } from '../../lib/helpers/uuid';
 
 const MAX_RETENTION_LOGS = 3;
 
@@ -32,15 +32,13 @@ export class ApplicationService {
     this.logger = new Logger(ApplicationService.name)
   }
 
-  public async createApplication(
+  public async create(
     data: CreateApplicationDto,
     user: RequestUser,
   ): Promise<ApiResponse<Application>> {
     const { id, name } = user;
 
-    const privateKey = crypto.randomUUID();
-    console.log("createApplication")
-    return await this.entityManager.transaction(async (manager) => {
+    return this.entityManager.transaction(async (manager) => {
       const app = await this.applicationQueryService.getDtoBy({ name: data.name });
       if (app) {
         return new ApiResponse("error", "Application with this name already exists");
@@ -52,9 +50,9 @@ export class ApplicationService {
       }
 
       const url = gravatar.url(data.name, "identicon");
-      const applicationPayload: Application = {
+      const applicationPayload: Partial<Application> = {
         ...data,
-        privateKey,
+        id: uuidService.generate(),
         owner: account,
         gravatar: url,
         createdAt: dateUtils.toUnix(),
@@ -87,42 +85,65 @@ export class ApplicationService {
 
       return new ApiResponse("success", "Application successfully created", application);
     }).catch((err: Error) => {
-      this.logger.error(`[${this.createApplication.name}] Caused by: ${err}`);
+      this.logger.error(`[${this.create.name}] Caused by: ${err}`);
       return new ApiResponse("error", INTERNAL_SERVER_ERROR, err);
     });
   }
 
-  public async updateApplication(
-    appBody: ApplicationDto | Partial<Application>
-  ): Promise<ApiResponse<unknown>> {
-    const { id, ...rest } = appBody;
-
+  public async generateApiKey(id: string, user: RequestUser): Promise<ApiResponse<string>> {
+    const apiKey = crypto.randomUUID();
     try {
-      await this.entityManager.getRepository(Application).update(
-        { id },
-        {
-          updatedAt: dateUtils.toUnix(),
-          ...rest
-        },
-      );
-
-      return new ApiResponse("success", "Application updated")
+      await this.update(id, {
+        security: {
+          apiKey,
+          lastUpdate: dateUtils.toUnix(),
+          generatedBy: user.name
+        }
+      });
+      return new ApiResponse("success", "API Key Generated.", apiKey);
     } catch (err) {
-      this.logger.error(`[${this.updateApplication.name}] Caused by: ${err}`);
+      this.logger.error(`[${this.generateApiKey.name}] Caused by: ${err}`);
       return new ApiResponse("error", INTERNAL_SERVER_ERROR, err);
     }
   }
 
-  private async validate(
-    name: string
-  ): Promise<void> {
-    const application = await this.applicationQueryService.getDtoBy({ name });
-    if (application) {
-      throw new ApplicationWithNameAlreadyExistsError();
+  public async removeApiKey(id: string): Promise<ApiResponse<unknown>> {
+    try {
+      await this.update(id, { security: null });
+      return new ApiResponse("success", "API Key Removed.");
+    } catch (err) {
+      this.logger.error(`[${this.removeApiKey.name}] Caused by: ${err}`);
+      return new ApiResponse("error", INTERNAL_SERVER_ERROR, err);
     }
   }
 
-  public async deleteApplication(
+  public async update(
+    id: string,
+    update: Partial<Application>,
+    manager: EntityManager = this.entityManager
+  ): Promise<void> {
+    await manager.getRepository(Application).update(
+      { id },
+      {
+        updatedAt: dateUtils.toUnix(),
+        ...update
+      },
+    );
+  }
+
+  public async updateApplication(appBody: ApplicationDto | Partial<Application>) {
+    const { id, ...rest } = appBody;
+
+    try {
+      await this.update(id, rest);
+      return new ApiResponse("success", "Application updated")
+    } catch (err) {
+      this.logger.error(`[${this.update.name}] Caused by: ${err}`);
+      return new ApiResponse("error", INTERNAL_SERVER_ERROR, err);
+    }
+  }
+
+  public async delete(
     appId: string
   ): Promise<ApiResponse<unknown>> {
     try {
@@ -135,7 +156,7 @@ export class ApplicationService {
 
       return new ApiResponse("success", "Application removed");
     } catch (err) {
-      this.logger.error(`[${this.deleteApplication.name}] Caused by: ${err}`);
+      this.logger.error(`[${this.delete.name}] Caused by: ${err}`);
       return new ApiResponse("error", INTERNAL_SERVER_ERROR, err);
     }
   }
