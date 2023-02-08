@@ -35,10 +35,10 @@ export const TableRow: FC<TableRowProps> = ({
       className={joinClasses(
         conditionClass(
           striped,
-          "odd:bg-secondary",
-          "border-t border-b-0 border-l-0 border-r-0 border-solid border-light-secondary"
+          "even:bg-primary",
+          "border-t border-b-0 border-l-0 border-r-0 border-solid border-secondary"
         ),
-        conditionClass(hovered, "hover:bg-light-secondary duration-200"),
+        conditionClass(hovered, "hover:bg-primary duration-200"),
         conditionClass(!!onRowClick, "cursor-pointer")
       )}
     >

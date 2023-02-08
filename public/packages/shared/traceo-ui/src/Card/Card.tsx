@@ -32,13 +32,13 @@ export const Card: FC<PropsWithChildren<CardProps>> = ({
   return (
     <div
       className={joinClasses(
-        "w-full p-0 m-0 mb-1 text-sm leading-5 relative bg-primary",
+        "w-full p-0 m-0 mb-1 text-sm leading-5 relative border border-solid border-secondary",
         className
       )}
       {...rest}
     >
       {(title || icon) && (
-        <div className="flex flex-row w-full px-6 py-4 items-center justify-between border-t-0 border-l-0 border-r-0 border-b border-solid border-[#303030]">
+        <div className="bg-primary flex flex-row w-full px-6 py-4 items-center justify-between border-t-0 border-l-0 border-r-0 border-b border-solid border-secondary">
           <div className="flex flex-row w-full">
             {icon && <div className="mr-2">{icon}</div>}
             {cardTitle}

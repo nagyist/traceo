@@ -67,46 +67,46 @@ export const IncidentsListPage = () => {
       }}
     >
       <Page.Content>
-        <Card>
-          <SearchWrapper className="pt-2 pb-12">
-            <InputSearch
-              placeholder="Search incidents by type, message, status or assigned user"
-              value={search}
-              onChange={setSearch}
-            />
-            <Select
-              placeholder="Select status"
-              width={150}
-              options={searchStatusOptions}
-              value={status}
-              onChange={(opt) => setStatus(opt?.value)}
-              isClearable
-            />
-            <Select
-              placeholder="Sort by"
-              width={150}
-              options={sortOptions}
-              value={sortBy}
-              onChange={(opt) => setSortBy(opt?.value)}
-              isClearable
-            />
-            <RadioButtonGroup
-              onChange={onChangePlotType}
-              value={plotType}
-              options={changeBarOptions}
-              size="sm"
-            />
-            <SortIcons order={order} setOrder={setOrder} />
-          </SearchWrapper>
+        {/* <Card> */}
+        <SearchWrapper className="pt-2 pb-12">
+          <InputSearch
+            placeholder="Search incidents by type, message, status or assigned user"
+            value={search}
+            onChange={setSearch}
+          />
+          <Select
+            placeholder="Select status"
+            width={150}
+            options={searchStatusOptions}
+            value={status}
+            onChange={(opt) => setStatus(opt?.value)}
+            isClearable
+          />
+          <Select
+            placeholder="Sort by"
+            width={150}
+            options={sortOptions}
+            value={sortBy}
+            onChange={(opt) => setSortBy(opt?.value)}
+            isClearable
+          />
+          <RadioButtonGroup
+            onChange={onChangePlotType}
+            value={plotType}
+            options={changeBarOptions}
+            size="sm"
+          />
+          <SortIcons order={order} setOrder={setOrder} />
+        </SearchWrapper>
 
-          <ConditionalWrapper
-            isEmpty={incidents?.length === 0}
-            isLoading={!hasFetched}
-            emptyView={<EmptyIncidentsList constraints={search} />}
-          >
-            <IncidentTable isLoading={!hasFetched} incidents={incidents} />
-          </ConditionalWrapper>
-        </Card>
+        <ConditionalWrapper
+          isEmpty={incidents?.length === 0}
+          isLoading={!hasFetched}
+          emptyView={<EmptyIncidentsList constraints={search} />}
+        >
+          <IncidentTable isLoading={!hasFetched} incidents={incidents} />
+        </ConditionalWrapper>
+        {/* </Card> */}
       </Page.Content>
     </Page>
   );

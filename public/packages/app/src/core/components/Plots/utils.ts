@@ -2,16 +2,16 @@ import { ToolboxComponentOption, TooltipComponentOption } from "echarts";
 
 export const tooltipOptions: TooltipComponentOption = {
   trigger: "axis",
-  backgroundColor: "#111217",
-  borderColor: "#111217",
+  backgroundColor: "#ebebeb",
+  borderColor: "#ebebeb",
   textStyle: {
-    color: "white",
+    color: "#2d2d2d",
     fontFamily:
       "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
   },
   axisPointer: {
     lineStyle: {
-      color: "gray",
+      color: "#ebebeb",
       type: "dashed",
       width: 1
     }
@@ -37,7 +37,7 @@ export const toolboxOptions: ToolboxComponentOption = {
 export const splitLine = {
   show: true,
   lineStyle: {
-    color: "#272A30",
+    color: "#ebebeb",
     width: 1
   }
 };

@@ -13,7 +13,7 @@ export const ListCard: FC<PropsWithChildren<ListCardProps>> = ({
     <div
       {...rest}
       className={joinClasses(
-        "w-full p-4 m-0 mb-1 text-sm leading-5 relative bg-secondary hover:bg-light-secondary rounded-md h-full cursor-pointer",
+        "w-full p-4 m-0 mb-1 text-sm leading-5 relative bg-primary hover:bg-secondary rounded-md h-full cursor-pointer",
         className
       )}
     >

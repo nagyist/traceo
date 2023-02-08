@@ -17,7 +17,10 @@ export const ConnectionError = () => {
   };
 
   return (
-    <Space className="w-full justify-center text-center pt-12" direction="vertical">
+    <Space
+      className="w-full justify-center text-center pt-12 bg-primary p-5 border border-solid border-secondary"
+      direction="vertical"
+    >
       <ExclamationCircleFilled className="text-5xl text-red-500" />
       <Typography size="xxl" weight="bold">
         Connection Error

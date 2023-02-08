@@ -60,7 +60,7 @@ export const CollapseItem: FC<CollapseItemProps> = ({
           "text-sm items-center w-full flex flex-row justify-between p-3 cursor-pointer",
           conditionClass(
             !ghost,
-            "rounded bg-secondary border border-solid border-light-secondary"
+            "rounded bg-primary border border-solid border-secondary"
           ),
           className
         )}
@@ -81,7 +81,7 @@ export const CollapseItem: FC<CollapseItemProps> = ({
             "py-3 px-4 text-start",
             conditionClass(
               !ghost,
-              "rounded border border-solid border-light-secondary"
+              "rounded border border-solid border-secondary"
             )
           )}
         >

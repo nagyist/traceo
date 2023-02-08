@@ -62,7 +62,7 @@ export const Table: FC<TableProps> = (props: TableProps) => {
   return (
     <div className="w-full flex flex-col">
       <table className={joinClasses("w-full text-primary", className)}>
-        <thead>
+        <thead className="bg-primary">
           <tr>{children}</tr>
         </thead>
         {!loading && (

@@ -19,8 +19,8 @@ export const defaultStyles = (width: number | string | undefined): StylesConfig 
             }),
             menu: (provided) => ({
                 ...provided,
-                background: "#111217",
-                border: "1px solid #22252b",
+                background: "#FFFFFF",
+                border: "1px solid rgba(36, 41, 46, 0.3)",
                 borderRadius: 0,
                 marginTop: 0,
                 zIndex: 999
@@ -33,10 +33,10 @@ export const defaultStyles = (width: number | string | undefined): StylesConfig 
                 textAlign: "start",
                 padding: 6,
                 ":hover": {
-                    background: "#22252b"
+                    background: "#F7F8FB"
                 },
                 ":active": {
-                    background: "#22252b"
+                    background: "#F7F8FB"
                 }
             }),
             valueContainer: (provided) => ({
@@ -50,12 +50,12 @@ export const defaultStyles = (width: number | string | undefined): StylesConfig 
             input: (provided) => ({
                 ...provided,
                 margin: 0,
-                color: "#ccccdc",
+                color: "#2d2d2d",
                 width: "auto"
             }),
             singleValue: (provided) => ({
                 ...provided,
-                color: "#ccccdc",
+                color: "#2d2d2d",
                 display: "flex",
                 alignItems: "center",
                 marginLeft: 0,

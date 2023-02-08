@@ -42,7 +42,7 @@ export const MenuItem: FC<Props> = ({ menu }) => {
         list-style: none;
         position: relative;
         display: flex;
-        color: rgba(255, 255, 255, 0.85);
+        color: #2d2d2d;
         padding: 12px 22px 8px;
         display: block;
         height: 100%;
@@ -52,12 +52,12 @@ export const MenuItem: FC<Props> = ({ menu }) => {
       }
 
       .menuItem:hover {
-        color: #ffffff;
+        color: #2d2d2d;
         border-bottom: 3px solid var(--color-bg-secondary);
       }
 
       .menuItemActive {
-        color: #ffffff;
+        color: #2d2d2d;
         border-bottom: 3px solid !important;
         border-image: linear-gradient(
           90deg,
@@ -65,6 +65,7 @@ export const MenuItem: FC<Props> = ({ menu }) => {
           #C58A0A 99.99%
         ) !important;
         border-image-slice: 1 !important;
+        font-weight: 600;
       }
       `}</style>
     </>

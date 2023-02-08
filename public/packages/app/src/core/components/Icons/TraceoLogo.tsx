@@ -35,7 +35,9 @@ export const TraceoLogo: FC<Props> = ({ size, onClick, name = false, className }
           "bg-yellow-500 flex justify-center items-center rounded-sm"
         )}
       >
-        <span className={joinClasses(typographyLogoSize[size], "font-bold")}>T</span>
+        <span className={joinClasses(typographyLogoSize[size], "font-bold text-white")}>
+          T
+        </span>
       </div>
 
       {name && (

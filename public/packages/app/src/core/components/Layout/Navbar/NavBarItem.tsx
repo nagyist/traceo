@@ -32,13 +32,13 @@ export const NavBarItem: FC<NavBarItemProps> = ({ route }) => {
       onClick={onClick && (() => onClick())}
       className={joinClasses(
         "py-2 mx-3 flex cursor-pointer mb-2 rounded-lg",
-        conditionClass(key && isActive(key), "text-white bg-primary"),
+        conditionClass(key && isActive(key), "text-black bg-yellow-400 font-bold"),
         conditionClass(!disabled, "duration-200 hover:text-white hover:bg-primary")
       )}
     >
       <Space className="w-full px-3 text-sm">
         {icon}
-        <Typography className="pl-2 cursor-pointer">{label}</Typography>
+        <Typography className="pl-2 cursor-pointer text-black">{label}</Typography>
       </Space>
     </li>
   );

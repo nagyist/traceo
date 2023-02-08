@@ -94,9 +94,7 @@ const MetricsPage = () => {
         description: "View metrics from your app after connecting and configuring the SDK"
       }}
     >
-      <Page.Content>
-        <Card>{renderContent()}</Card>
-      </Page.Content>
+      <Page.Content>{renderContent()}</Page.Content>
     </Page>
   );
 };

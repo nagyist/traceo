@@ -16,7 +16,7 @@ export const DashboardHeader = () => {
   }
 
   return (
-    <nav className="flex h-12 max-h-12 items-center justify-between py-2 px-5 border-l-0 border-t-0 border-r-0 border-b border-solid border-secondary z-10 bg-canvas">
+    <nav className="flex h-12 max-h-12 items-center justify-between py-2 px-5 border-l-0 border-t-0 border-r-0 border-b border-solid border-secondary z-10 bg-primary">
       <Space>
         <TraceoLogo
           name={true}

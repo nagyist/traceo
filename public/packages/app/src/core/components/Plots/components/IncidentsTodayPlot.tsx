@@ -30,7 +30,7 @@ const IncidentsTodayPlot: FC<Props> = ({ stats }) => {
       boundaryGap: false,
       axisLabel: {
         showMaxLabel: true,
-        color: "white",
+        color: "#2d2d2d",
         fontSize: 11,
         padding: 0,
         interval: 2
@@ -42,12 +42,12 @@ const IncidentsTodayPlot: FC<Props> = ({ stats }) => {
     yAxis: {
       type: "value",
       axisLabel: {
-        color: "white",
+        color: "#2d2d2d",
         fontSize: 11
       },
       splitLine: {
         lineStyle: {
-          color: "#272A30",
+          color: "#ebebeb",
           width: 1
         }
       },

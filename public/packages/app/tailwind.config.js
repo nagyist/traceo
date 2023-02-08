@@ -7,16 +7,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "light-secondary": "#1C202E",
-        primary: "#1b1b28",
-        secondary: "#282a3b",
-        canvas: "#14141f",
+        primary: "#F7F8FB",
+        secondary: "rgba(36, 41, 46, 0.3)",
+        canvas: "#ffffff",
         link: "#6e9fff",
         contrast: "#ffffff"
       },
       textColor: {
-        primary: "#CCCCDC",
-        secondary: "#CCCCDCA6"
+        primary: "#2d2d2d",
+        secondary: "#2d2d2d"
       },
       fontSize: {
         "2xs": "11px"

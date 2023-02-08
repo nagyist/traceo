@@ -51,7 +51,7 @@ const Control = (props: any) => {
 
   return (
     <div
-      className="h-[30px] bg-canvas px-2 flex rounded-md items-center"
+      className="h-[30px] bg-canvas px-2 flex rounded-md items-center text-sm"
       {...innerProps}
     >
       {(selectProps.prefix || selectProps.value?.icon) && (
@@ -100,7 +100,7 @@ const Option: FC<SelectMenuOptionProps> = ({
     <div
       ref={innerRef}
       className={joinClasses(
-        "flex flex-row px-3 py-1 hover:bg-secondary items-center cursor-pointer",
+        "flex flex-row px-3 py-1 hover:bg-primary items-center cursor-pointer",
         conditionClass(isSelected, "bg-secondary")
       )}
       {...innerProps}

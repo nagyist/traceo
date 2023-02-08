@@ -12,7 +12,7 @@ export const Divider: FC<DividerProps> = ({
   return (
     <hr
       className={joinClasses(
-        "border-light-secondary",
+        "border-secondary",
         conditionClass(orientation === "vertical", "border-y-0", "border-x-0"),
         className
       )}

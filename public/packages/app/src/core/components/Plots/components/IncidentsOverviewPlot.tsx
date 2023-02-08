@@ -1,4 +1,4 @@
-import { Space } from "@traceo/ui"
+import { Space } from "@traceo/ui";
 import dateUtils from "../../../utils/date";
 import { statisticUtils } from "../../../utils/statistics";
 import { normalizePlotData, tooltipOptions } from "../utils";
@@ -39,7 +39,7 @@ const IncidentsOverviewPlot = ({ stats }: { stats: ErrorDetails[] }) => {
       offset: 12,
       axisLabel: {
         formatter: (v) => dateUtils.formatDate(Number(v), "DD-MM"),
-        color: "white",
+        color: "#2d2d2d",
         fontSize: 11
       },
       axisPointer: {
@@ -50,7 +50,7 @@ const IncidentsOverviewPlot = ({ stats }: { stats: ErrorDetails[] }) => {
       splitLine: {
         show: true,
         lineStyle: {
-          color: "#272A30",
+          color: "#ebebeb",
           width: 1
         }
       }
@@ -58,12 +58,12 @@ const IncidentsOverviewPlot = ({ stats }: { stats: ErrorDetails[] }) => {
     yAxis: {
       type: "value",
       axisLabel: {
-        color: "white",
+        color: "#2d2d2d",
         fontSize: 11
       },
       splitLine: {
         lineStyle: {
-          color: "#272A30",
+          color: "#ebebeb",
           width: 1
         }
       },

@@ -10,7 +10,7 @@ const PaginationButton = styled.div`
   cursor: pointer;
   background-color: transparent;
   &:hover {
-    background-color: var(--color-bg-light-secondary);
+    background-color: var(--color-bg-primary);
   }
   ${({ disabled }) => {
     if (disabled) {
@@ -25,7 +25,7 @@ const PaginationButton = styled.div`
 const mapPaginationPostion: Record<PaginationPositionType, string> = {
   left: "justify-start",
   center: "justify-center",
-  right: "justify-end"
+  right: "justify-end",
 };
 
 interface TablePaginationProps {
@@ -38,11 +38,16 @@ export const TablePagination: FC<TablePaginationProps> = ({
   currentPage,
   pagesCount,
   position,
-  setCurrentPage
+  setCurrentPage,
 }) => {
   return (
-    <div className={joinClasses("w-full mt-12 flex", mapPaginationPostion[position])}>
-      <div className="border border-solid rounded border-light-secondary items-center flex flex-row max-w-min">
+    <div
+      className={joinClasses(
+        "w-full mt-12 flex",
+        mapPaginationPostion[position]
+      )}
+    >
+      <div className="border border-solid rounded border-secondary items-center flex flex-row max-w-min">
         <PaginationButton
           disabled={currentPage === 1}
           onClick={() => setCurrentPage(currentPage - 1)}
